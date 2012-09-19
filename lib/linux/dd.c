@@ -2,6 +2,16 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+int open_input_file(char * fn) {
+  return open(fn, O_RDONLY);
+}
+
+int open_output_file(char * fn) {
+  return open(fn, O_WRONLY);
+}
 
 int dd(int in_fd, int out_fd, size_t buffersize) {
   char * buffer;
@@ -13,6 +23,8 @@ int dd(int in_fd, int out_fd, size_t buffersize) {
     fprintf(stderr, "Failed to allocate buffer.\n");
     return 1;
   }
+
+  printf("read_offset: %d; write_offset: %d\n", lseek(in_fd, 0, SEEK_CUR), lseek(out_fd, 0, SEEK_CUR));
 
   memset(buffer, 0, buffersize);
   while((count = read(in_fd, buffer, buffersize)) != 0) {
